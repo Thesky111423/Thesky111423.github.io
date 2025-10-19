@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>精美日期显示</title>
+    <style>
+        /* 页面整体样式 */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        /* 日期卡片容器样式 */
+        .date-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            width: 150px;
+            text-align: center;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* 鼠标悬停时放大效果 */
+        .date-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 月份样式 */
+        .date-card .month {
+            background-color: #e74c3c;
+            color: #ffffff;
+            padding: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* 日期（天）样式 */
+        .date-card .day {
+            font-size: 52px;
+            font-weight: bold;
+            color: #34495e;
+            padding: 10px 0;
+            line-height: 1.1;
+        }
+
+        /* 年份样式 */
+        .date-card .year {
+            background-color: #f8f9fa;
+            color: #7f8c8d;
+            padding: 10px;
+            font-size: 16px;
+            border-top: 1px solid #e9ecef;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="date-card">
+        <div class="month">十月</div>
+        <div class="day">19</div>
+        <div class="year">2025</div>
+    </div>
+
+</body>
+</html>
