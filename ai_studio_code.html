@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>衡山 · 日与夜 | Our Unforgettable Adventure</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Serif SC', serif;
+            color: #333;
+            background-color: #f4f4f4;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://source.unsplash.com/1600x900/?mountain,night,stars') no-repeat center center/cover;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .hero-content {
+            animation: slideInUp 1.5s ease-out;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin: 0;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-top: 10px;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            background-color: inherit;
+            width: 50%;
+            opacity: 0;
+            animation: fadeInRight 1s forwards;
+        }
+
+        .timeline-item:nth-child(odd) {
+            left: 0;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+            animation-name: fadeInLeft;
+        }
+        
+        .timeline-item:nth-child(2) { animation-delay: 0.5s; }
+        .timeline-item:nth-child(3) { animation-delay: 1s; }
+        .timeline-item:nth-child(4) { animation-delay: 1.5s; }
+        .timeline-item:nth-child(5) { animation-delay: 2s; }
+
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            right: -17px;
+            background-color: white;
+            border: 4px solid #FFC107;
+            top: 15px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .timeline-item:nth-child(even)::after {
+            left: -16px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            background-color: #ddd;
+            width: 6px;
+            height: 100%;
+            margin-left: -3px;
+        }
+
+        .content {
+            padding: 20px 30px;
+            background-color: #f9f9f9;
+            position: relative;
+            border-radius: 6px;
+        }
+
+        .content h2 {
+            margin-top: 0;
+            color: #FFC107;
+        }
+        
+        .highlight {
+            font-weight: 700;
+            color: #d9534f;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #333;
+            color: white;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideInUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(-100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>衡山 · 日与夜</h1>
+            <p>敬我们那一次难忘的、又累又怕的大冒险</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="timeline">
+            
+            <div class="timeline-item">
+                <div class="content">
+                    <h2>下午 2:40</h2>
+                    <p>旅途的终点，冒险的起点。我们抵达山脚，故事，从这里开始。</p>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="content">
+                    <h2>攀登</h2>
+                    <p>上山的路，充满了喘息和汗水，但每一步，都是共同丈量的记忆。</p>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="content">
+                    <h2>那条没有灯的小路</h2>
+                    <p>故事的最高潮。在漆黑的山路上，我们共享了那份最真实的<span class="highlight">恐惧</span>。也正因如此，这段记忆才变得无可替代。</p>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="content">
+                    <h2>傍晚 7:40</h2>
+                    <p>历时<span class="highlight">整整五个小时</span>，我们，终于“成功”出山。疲惫的身体，但却是满载而归的灵魂。</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="content">
+                    <h2>很多年后...</h2>
+                    <p>也许我们会忘记很多事，但我们一定会记得这个下午。记得我们一起走过的、那段又累又怕，但闪闪发光的青春。</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>TO GYD, BY 天空z | A friendship forged in mountains and darkness. (一段在山与黑暗中锻造的友谊)</p>
+    </footer>
+
+</body>
+</html>
