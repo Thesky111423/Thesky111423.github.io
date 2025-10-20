@@ -1,0 +1,416 @@
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Remove direct background-image from body, it's handled by pseudo-elements */
+    /* background-image: url("beijing.jpg"); */
+    /* background-size: cover; */
+    /* background-position: center; */
+    /* background-repeat: no-repeat; */
+
+    /* Define CSS variables for background images */
+    --bg-image-1: url("beijing.jpg"); /* Current active background */
+    --bg-image-2: url("beijing.jpg"); /* Next background (initially same) */
+}
+
+/* Layer 1: Always visible, holds the 'current' background */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: var(--bg-image-1); /* Uses bg-image-1 */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 1; /* Always visible by default */
+    transition: opacity 1s ease-in-out; /* For future use if needed, but not for cross-fade */
+    z-index: -2; /* Lower z-index */
+}
+
+/* Layer 2: Hidden by default, holds the 'next' background, fades in on transition */
+body::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: var(--bg-image-2); /* Uses bg-image-2 */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0; /* Hidden by default */
+    transition: opacity 1s ease-in-out; /* This is the fade-in transition */
+    z-index: -1; /* Higher z-index to fade over before */
+}
+
+/* When .bg-transition is active, the 'after' layer fades in over the 'before' layer */
+body.bg-transition::after {
+    opacity: 1; /* Fades in */
+}
+
+/* Ensure the other CSS remains unchanged for .main-container, .sidebar, etc. */
+.main-container {
+    display: flex;
+    max-width: 1200px;
+    width: 90%;
+    height: 85vh;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: none;
+    animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.sidebar {
+    width: 280px;
+    padding: 30px;
+    background-color: none;
+    border-right: 1px solid rgba(220, 220, 220, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+}
+
+.sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(230, 245, 255, 0.5), rgba(200, 230, 255, 0.5));
+    z-index: -1;
+    opacity: 0.7;
+    border-radius: 15px 0 0 15px;
+}
+
+.sidebar h2 {
+    color: #0056b3;
+    font-size: 2em;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+    flex-grow: 1;
+}
+
+.sidebar ul li {
+    margin-bottom: 15px;
+}
+
+.sidebar ul li a {
+    display: block;
+    padding: 12px 15px;
+    color: #555;
+    text-decoration: none;
+    font-size: 1.15em;
+    border-radius: 10px;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    font-weight: 500;
+}
+
+.sidebar ul li a:hover {
+    background-color: #e0f2f7;
+    color: #007bff;
+    transform: translateX(5px);
+}
+
+.sidebar ul li a.active {
+    background-color: #007bff;
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+    transform: translateX(0);
+}
+
+.content-area {
+    flex-grow: 1;
+    padding: 0; /* content-area should not have padding, content-page has it */
+    overflow-y: auto;
+    box-sizing: border-box;
+    background-color: none;
+    border-radius: 0 15px 15px 0;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+.image-gallery {
+    display: flex; /* 使用 Flexbox 布局 */
+    flex-wrap: wrap; /* 允许图片换行 */
+    gap: 15px; /* 图片之间的间距 */
+    justify-content: center; /* 水平居中图片 */
+}
+
+.image-gallery a {
+    flex: 0 0 calc(33.333% - 15px); /* 每行显示3张图片，减去间距 */
+    max-width: calc(33.333% - 15px); /* 确保宽度不超过容器的1/3 */
+    height: 180px; /* 设置每个图片链接容器的固定高度 */
+    display: flex; /* 让链接内部的图片也能居中 */
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* 隐藏超出容器的部分 */
+}
+
+.carousel-container {
+    position: relative; /* 允许内部元素进行绝对定位 */
+    width: 600px; /* 根据需要调整轮播图的宽度 */
+    height: 350px; /* 根据需要调整轮播图的高度 */
+    margin: 20px auto; /* 居中显示 */
+    overflow: hidden; /* 隐藏超出容器的图片 */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.carousel-slide {
+    display: flex; /* 使用 flexbox 让所有图片水平排列 */
+    width: 100%; /* 占据容器的宽度 */
+    height: 100%; /* 占据容器的高度 */
+    transition: transform 0.5s ease-in-out; /* 添加平滑的滑动过渡效果 */
+}
+
+.carousel-slide a {
+    min-width: 100%; /* 每个链接占据整个轮播图的宽度 */
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box; /* 包含 padding 和 border 在宽度内 */
+}
+
+.carousel-slide img {
+    width: 100%; /* 图片填充其父链接 */
+    height: 100%; /* 图片填充其父链接 */
+    object-fit: cover; /* 裁剪图片以填充，保持比例 */
+    display: block;
+}
+
+/* 轮播控制按钮样式 */
+.carousel-prev,
+.carousel-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 24px;
+    border-radius: 5px;
+    z-index: 10; /* 确保按钮在图片之上 */
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.carousel-prev:hover,
+.carousel-next:hover {
+    opacity: 1;
+}
+
+.carousel-prev {
+    left: 10px;
+}
+
+.carousel-next {
+    right: 10px;
+}
+
+/* 轮播指示器样式 */
+.carousel-dots {
+    position: absolute;
+    bottom: 15px;
+    width: 100%;
+    text-align: center;
+    z-index: 10;
+}
+
+.dot {
+    display: inline-block;
+    height: 10px;
+    width: 10px;
+    margin: 0 5px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.dot.active {
+    background-color: white;
+}
+h1 {
+    color: #007bff;
+    font-size: 2.8em;
+    margin-bottom: 25px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+h2 {
+    color: #0056b3;
+    font-size: 2em;
+    margin-top: 35px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+p {
+    font-size: 1.15em;
+    line-height: 1.8;
+    margin-bottom: 18px;
+    color: #1ebbde;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+ul li {
+    margin-bottom: 12px;
+}
+
+ul li a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 1.1em;
+    transition: color 0.3s ease;
+}
+
+ul li a:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 35px 0;
+}
+
+.action-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 13px 30px;
+    border-radius: 50px;
+    font-size: 1.15em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    margin-top: 30px;
+    outline: none;
+    box-shadow: 0 5px 10px rgba(0, 123, 255, 0.3);
+}
+
+.action-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 123, 255, 0.4);
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    .main-container {
+        flex-direction: column;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        padding: 25px;
+        border-radius: 10px 10px 0 0;
+    }
+    .sidebar::before {
+        border-radius: 10px 10px 0 0;
+    }
+    .sidebar h2 {
+        font-size: 1.6em;
+        margin-bottom: 20px;
+    }
+    .sidebar ul {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 0;
+    }
+    .sidebar ul li {
+        margin: 5px 10px;
+    }
+    .sidebar ul li a {
+        padding: 8px 12px;
+        font-size: 1em;
+    }
+    .action-button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 1em;
+    }
+    .content-area {
+        padding: 25px;
+        border-radius: 0 0 10px 10px;
+        box-shadow: none;
+    }
+    h1 {
+        font-size: 2.2em;
+    }
+    h2 {
+        font-size: 1.7em;
+    }
+    p, ul li a {
+        font-size: 1em;
+    }
+}
+
+.content-page {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    position: absolute;
+    width: calc(100% - 80px);
+    left: 40px;
+    top: 40px;
+    visibility: hidden;
+    max-height: calc(100% - 80px);
+    overflow-y: auto;
+    padding-bottom: 20px;
+    padding: 40px; /* Add padding back to content-page */
+    box-sizing: border-box; /* Include padding in width/height calculation */
+}
+
+.content-page.active {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    position: static;
+}
