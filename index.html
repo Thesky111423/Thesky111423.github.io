@@ -5,38 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>每日之光 | Daily Spark</title>
     
-    <!-- 引入优雅的 Google 字体 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&family=Noto+Sans+SC:wght@300;400&display=swap" rel="stylesheet">
 
     <style>
         /* --- 全局样式 --- */
         body {
-            font-family: 'Lato', 'Helvetica Neue', Arial, 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            font-family: 'Lato', 'Noto Sans SC', 'Helvetica Neue', Arial, 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
             background-color: #f4f4f9;
             color: #333;
             margin: 0;
             padding: 2rem;
+            min-height: 100vh;
+            box-sizing: border-box;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            box-sizing: border-box;
-            transition: background-color 0.3s;
         }
 
-        /* --- 主容器 --- */
-        .container {
-            max-width: 700px;
+        /* --- 页面主结构 (Flexbox 布局) --- */
+        .page-wrapper {
+            display: flex;
             width: 100%;
-            text-align: center;
+            max-width: 1100px;
+            gap: 3rem; /* 左右两栏的间距 */
+            align-items: center;
             animation: fadeIn 1s ease-in-out;
         }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- 左侧：时间面板 --- */
+        .time-panel {
+            flex: 0 0 250px; /* 固定宽度，不伸缩 */
+            text-align: center;
+        }
+
+        #clock {
+            font-size: 4rem;
+            font-weight: 300;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+        }
+
+        #suggestion {
+            font-size: 1rem;
+            color: #7f8c8d;
+            line-height: 1.7;
+            min-height: 50px; /* 防止文字切换时跳动 */
+        }
+        
+        /* --- 右侧：主内容区 --- */
+        .main-content {
+            flex: 1; /* 占据剩余空间 */
+            max-width: 700px;
         }
 
         /* --- 标题 --- */
@@ -46,6 +73,7 @@
             font-weight: 700;
             margin-bottom: 2rem;
             color: #2c3e50;
+            text-align: center;
         }
         
         /* --- 内容卡片 --- */
@@ -64,12 +92,13 @@
         }
 
         /* --- 每日名言部分 --- */
-        #quote-container h2 {
+        #quote-container h2, #notes-container h2 {
             font-family: 'Crimson Text', serif;
             font-size: 1.2rem;
             color: #7f8c8d;
             margin-bottom: 1.5rem;
             font-weight: 400;
+            text-align: center;
         }
 
         #quote-text {
@@ -78,36 +107,30 @@
             font-size: 1.6rem;
             line-height: 1.6;
             color: #34495e;
-            min-height: 80px; /* 防止切换时跳动 */
+            min-height: 80px;
+            text-align: center;
         }
 
         #quote-author {
             margin-top: 1rem;
             font-size: 1rem;
             color: #95a5a6;
+            text-align: center;
         }
 
         /* --- 个人便签部分 --- */
-        #notes-container h2 {
-            font-family: 'Crimson Text', serif;
-            font-size: 1.2rem;
-            color: #7f8c8d;
-            margin-bottom: 1rem;
-            font-weight: 400;
-        }
-
         #user-note {
             width: 100%;
             border: none;
             background-color: transparent;
-            font-family: 'Lato', sans-serif;
             font-size: 1.1rem;
             color: #34495e;
             text-align: center;
             padding: 0.5rem;
-            outline: none; /* 移除点击时的边框 */
+            outline: none;
             border-bottom: 2px solid #ecf0f1;
             transition: border-color 0.3s;
+            box-sizing: border-box;
         }
 
         #user-note:focus {
@@ -125,43 +148,102 @@
             color: #2ecc71;
             opacity: 0;
             transition: opacity 0.5s;
+            text-align: center;
         }
 
-        /* --- 页脚 --- */
-        footer {
-            margin-top: 2rem;
-            font-size: 0.9rem;
-            color: #95a5a6;
+        /* --- 响应式设计：手机端适配 --- */
+        @media (max-width: 768px) {
+            .page-wrapper {
+                flex-direction: column; /* 垂直排列 */
+                gap: 2rem;
+            }
+            body {
+                padding: 1rem;
+            }
+            .time-panel {
+                flex-basis: auto; /* 高度自动 */
+                width: 100%;
+                margin-bottom: 1rem; /* 与下方卡片拉开距离 */
+            }
+            #clock {
+                font-size: 3.5rem;
+            }
+            .card {
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            #quote-text {
+                font-size: 1.3rem;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        
-        <h1>每日之光</h1>
+    <div class="page-wrapper">
+        <!-- 左侧：时间面板 -->
+        <aside class="time-panel">
+            <div id="clock"></div>
+            <p id="suggestion"></p>
+        </aside>
 
-        <!-- 每日一句卡片 -->
-        <div id="quote-container" class="card">
-            <h2>今日之语</h2>
-            <p id="quote-text">正在加载今日的智慧...</p>
-            <p id="quote-author"></p>
-        </div>
-        
-        <!-- 个人便签卡片 -->
-        <div id="notes-container" class="card">
-            <h2>我的便签</h2>
-            <input type="text" id="user-note" placeholder="写下任何你想对自己说的话...">
-            <div class="save-status" id="save-status">已自动保存</div>
-        </div>
+        <!-- 右侧：主内容 -->
+        <main class="main-content">
+            <h1>每日之光</h1>
 
-        <footer>
-            <p>愿文字给你带来力量与平静。</p>
-        </footer>
+            <div id="quote-container" class="card">
+                <h2>今日之语</h2>
+                <p id="quote-text">...</p>
+                <p id="quote-author"></p>
+            </div>
+            
+            <div id="notes-container" class="card">
+                <h2>我的便签</h2>
+                <input type="text" id="user-note" placeholder="写下任何你想对自己说的话...">
+                <div class="save-status" id="save-status">已自动保存</div>
+            </div>
+        </main>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+
+            // --- 【新增】左侧时间和提示功能 ---
+            const clockElem = document.getElementById('clock');
+            const suggestionElem = document.getElementById('suggestion');
+
+            function padZero(num) {
+                return num < 10 ? '0' + num : num;
+            }
+
+            function updateTimeAndSuggestion() {
+                const now = new Date();
+                const hours = now.getHours();
+                const minutes = now.getMinutes();
+                const seconds = now.getSeconds();
+
+                // 更新时间
+                clockElem.textContent = `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`;
+
+                // 更新提示语
+                let suggestionText = '';
+                if (hours >= 5 && hours < 8) {
+                    suggestionText = "清晨好。新的一天开始了，记得给自己一个微笑。";
+                } else if (hours >= 8 && hours < 12) {
+                    suggestionText = "上午好。专注的时光总是过得很快，喝杯水休息一下吧。";
+                } else if (hours >= 12 && hours < 14) {
+                    suggestionText = "午后时光。好好吃饭，小憩片刻，为下午储备能量。";
+                } else if (hours >= 14 && hours < 18) {
+                    suggestionText = "下午好。如果有些疲惫，不妨站起来看看窗外。";
+                } else if (hours >= 18 && hours < 22) {
+                    suggestionText = "夜幕降临。放下忙碌，享受属于自己的宁静时刻吧。";
+                } else {
+                    suggestionText = "夜深了。世界睡了，请你也早点休息，晚安。";
+                }
+                suggestionElem.textContent = suggestionText;
+            }
 
             // --- 每日一句 功能 ---
             const quotes = [
@@ -174,6 +256,7 @@
                 { text: "世界上只有一种英雄主义，那就是在认清生活真相之后依然热爱生活。", author: "— 罗曼·罗兰《米开朗琪罗传》" },
                 { text: "所有的大人都曾经是小孩，虽然，只有少数的人记得。", author: "— 安托万·德·圣-埃克苏佩里《小王子》" },
                 { text: "如果你什么都不尝试，你就不会失败...但过你想要的生活是需要骨气的。", author: "— 理查德·耶茨《革命之路》" },
+                { text: "只要想着快乐的事情，你就能飞起来。", author: "— J.M. 巴里《彼得·潘》" },
                 { text: "人不是为失败而生的。", author: "— 海明威《老人与海》" },
                 { text: "心在哪，财富就在哪。", author: "— 保罗·科埃略《牧羊少年奇幻之旅》" }
             ];
@@ -185,7 +268,6 @@
                 const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
                 const quoteIndex = dayOfYear % quotes.length;
                 const quote = quotes[quoteIndex];
-
                 quoteTextElem.textContent = `“${quote.text}”`;
                 quoteAuthorElem.textContent = quote.author;
             }
@@ -194,38 +276,29 @@
             const userNoteInput = document.getElementById('user-note');
             const saveStatusElem = document.getElementById('save-status');
             
-            // 页面加载时，读取本地存储的数据
             function loadNote() {
                 const savedNote = localStorage.getItem('userPersonalNote');
-                if (savedNote) {
-                    userNoteInput.value = savedNote;
-                }
+                if (savedNote) { userNoteInput.value = savedNote; }
             }
             
             let saveTimeout;
-            // 当用户输入时，保存数据到本地
             userNoteInput.addEventListener('input', function() {
-                // 清除之前的定时器，防止频繁显示“已保存”
                 clearTimeout(saveTimeout);
-                
                 localStorage.setItem('userPersonalNote', userNoteInput.value);
-                
-                // 显示“已保存”提示
                 saveStatusElem.style.opacity = 1;
-                
-                // 2秒后自动隐藏提示
                 saveTimeout = setTimeout(() => {
                     saveStatusElem.style.opacity = 0;
                 }, 2000);
             });
 
-
             // --- 初始化页面 ---
+            updateTimeAndSuggestion(); // 立即执行一次以避免空白
+            setInterval(updateTimeAndSuggestion, 1000); // 每秒更新一次
+            
             getDailyQuote();
             loadNote();
 
         });
     </script>
 </body>
-</html>```
-
+</html>
