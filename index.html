@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>每日一句 | Daily Spark</title>
+    <title>每日之光 | Daily Spark</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&family=Noto+Sans+SC:wght@300;400&display=swap" rel="stylesheet">
+
+    <!-- 【更新】引入“不蒜子”计数服务的脚本 -->
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
     <style>
         :root {
@@ -90,7 +93,6 @@
             line-height: 1.7;
             min-height: 50px;
         }
-        /* --- 【新增】访客计数器样式 --- */
         #visitor-counter {
             margin-top: 1.5rem;
             font-size: 0.9rem;
@@ -143,7 +145,7 @@
             .page-wrapper { flex-direction: column; gap: 2rem; }
             body { padding: 1rem; padding-top: 70px; }
             .theme-switcher { top: 15px; right: 15px; }
-            .time-panel { flex-basis: auto; width: 100%; margin-bottom: 0; } /* 移除margin-bottom */
+            .time-panel { flex-basis: auto; width: 100%; margin-bottom: 0; }
             #clock { font-size: 3.5rem; }
             .card { padding: 1.5rem; }
             h1 { font-size: 2rem; }
@@ -159,14 +161,16 @@
         <aside class="time-panel">
             <div id="clock"></div>
             <p id="suggestion"></p>
-            <!-- 【新增】访客计数器的显示位置 -->
-            <p id="visitor-counter">正在统计访客...</p>
+            <!-- 【更新】计数器的HTML结构已改为不蒜子要求的格式 -->
+            <p id="visitor-counter">
+                您是第 <strong id="busuanzi_value_site_pv"></strong> 位访客
+            </p>
         </aside>
         <main class="main-content">
-            <h1>每日一句</h1>
+            <h1>每日之光</h1>
             <div id="quote-container" class="card">
                 <h2>今日之语</h2>
-                <p id="quote-text">正在获取今日份的灵感...</p>
+                <p id="quote-text">正在寻找书中的智慧...</p>
                 <p id="quote-author"></p>
             </div>
             <div id="notes-container" class="card">
@@ -177,10 +181,12 @@
         </main>
     </div>
 
+    <!-- 【更新】引入“今日诗词”的官方JS库 -->
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             
-            // --- 主题切换功能 ---
+            // --- 主题切换功能 (保持不变) ---
             const themeSwitcher = document.getElementById('theme-switcher');
             const body = document.body;
             const savedTheme = localStorage.getItem('theme');
@@ -188,15 +194,13 @@
             themeSwitcher.addEventListener('click', function() {
                 body.classList.toggle('dark-mode');
                 if (body.classList.contains('dark-mode')) {
-                    themeSwitcher.textContent = '☀️';
-                    localStorage.setItem('theme', 'dark');
+                    themeSwitcher.textContent = '☀️'; localStorage.setItem('theme', 'dark');
                 } else {
-                    themeSwitcher.textContent = '🌙';
-                    localStorage.setItem('theme', 'light');
+                    themeSwitcher.textContent = '🌙'; localStorage.setItem('theme', 'light');
                 }
             });
 
-            // --- 时间和提示功能 ---
+            // --- 时间和提示功能 (保持不变) ---
             const clockElem = document.getElementById('clock');
             const suggestionElem = document.getElementById('suggestion');
             function padZero(num) { return num < 10 ? '0' + num : num; }
@@ -213,51 +217,44 @@
                 suggestionElem.textContent = suggestionText;
             }
 
-            // --- 每日一句功能 ---
+            // --- 【更新】每日一句功能 -> 改用“今日诗词”SDK ---
             const quoteTextElem = document.getElementById('quote-text');
-            const quoteAuthorElem = document.getElementById('quote-author');
-            function getDailyQuote() {
-                fetch('https://v1.hitokoto.cn/?c=i&c=d&encode=json').then(response => response.json()).then(data => {
-                    quoteTextElem.textContent = `“${data.hitokoto}”`;
-                    quoteAuthorElem.textContent = `— ${data.from_who || ''}《${data.from}》`;
-                }).catch(error => {
-                    console.error('获取名言失败:', error);
-                    quoteTextElem.textContent = "“世界上只有一种英雄主义，那就是在认清生活真相之后依然热爱生活。”";
-                    quoteAuthorElem.textContent = "— 罗曼·罗兰";
-                });
-            }
+const quoteAuthorElem = document.getElementById('quote-author');
 
-            // --- 个人便签功能 ---
+function getDailyQuote() {
+    // 我们重新使用“一言”API，并指定只获取文学(d)、哲学(k)分类
+    fetch('https://v1.hitokoto.cn/?c=d&c=k&encode=json')
+        .then(response => response.json())
+        .then(data => {
+            // 成功获取数据后，更新页面内容
+            quoteTextElem.textContent = `“${data.hitokoto}”`;
+            // 如果句子有作者信息，就显示 "作者《出处》"，否则只显示《出处》
+            const authorText = data.from_who ? `${data.from_who} ` : '';
+            quoteAuthorElem.textContent = `— ${authorText}《${data.from}》`;
+        })
+        .catch(error => {
+            // 如果获取失败，显示一句备用名言
+            console.error('获取名言失败:', error);
+            quoteTextElem.textContent = "“一个人可以被毁灭，但不能被打败。”";
+            quoteAuthorElem.textContent = "— 海明威《老人与海》";
+        });
+}
+
+            // --- 个人便签功能 (保持不变) ---
             const userNoteInput = document.getElementById('user-note');
             const saveStatusElem = document.getElementById('save-status');
             function loadNote() { const savedNote = localStorage.getItem('userPersonalNote'); if (savedNote) { userNoteInput.value = savedNote; } }
             let saveTimeout;
             userNoteInput.addEventListener('input', function() { clearTimeout(saveTimeout); localStorage.setItem('userPersonalNote', userNoteInput.value); saveStatusElem.style.opacity = 1; saveTimeout = setTimeout(() => { saveStatusElem.style.opacity = 0; }, 2000); });
             
-            // --- 【新增】访客计数功能 ---
-            const counterElem = document.getElementById('visitor-counter');
-            function updateVisitorCount() {
-                // 我们使用你的GitHub用户名作为这个计数器的唯一ID
-                const namespace = 'thesky111423'; 
-                const key = 'website-visitor-count';
-
-                fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        counterElem.innerHTML = `您是访问该网页的第 <strong>${data.value}</strong> 位朋友`;
-                    })
-                    .catch(error => {
-                        console.error("计数器API请求失败:", error);
-                        counterElem.textContent = "欢迎您的到访";
-                    });
-            }
+            // --- 【更新】访客计数功能 -> 已完全交给“不蒜子”脚本，无需JS代码 ---
+            // 我们之前写的 updateVisitorCount 函数现在可以安全地删除了。
 
             // --- 初始化页面 ---
             updateTimeAndSuggestion();
             setInterval(updateTimeAndSuggestion, 1000);
             getDailyQuote();
             loadNote();
-            updateVisitorCount(); // 【新增】执行计数功能
         });
     </script>
 </body>
