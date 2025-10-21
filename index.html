@@ -10,11 +10,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&family=Noto+Sans+SC:wght@300;400&display=swap" rel="stylesheet">
 
     <style>
-        /* --- 全局样式 --- */
+        :root {
+            --bg-color: #f4f4f9;
+            --card-bg-color: #ffffff;
+            --text-color-primary: #2c3e50;
+            --text-color-secondary: #34495e;
+            --text-color-tertiary: #7f8c8d;
+            --border-color: #ecf0f1;
+            --accent-color: #3498db;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --shadow-color-hover: rgba(0, 0, 0, 0.12);
+        }
+        body.dark-mode {
+            --bg-color: #1a1a2e;
+            --card-bg-color: #16213e;
+            --text-color-primary: #e0fbfc;
+            --text-color-secondary: #c9d6f0;
+            --text-color-tertiary: #9ba4b4;
+            --border-color: #4a4e69;
+            --accent-color: #3d5af1;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+            --shadow-color-hover: rgba(0, 0, 0, 0.3);
+        }
         body {
-            font-family: 'Lato', 'Noto Sans SC', 'Helvetica Neue', Arial, 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
+            font-family: 'Lato', 'Noto Sans SC', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color-primary);
             margin: 0;
             padding: 2rem;
             min-height: 100vh;
@@ -22,183 +43,123 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            transition: background-color 0.3s, color 0.3s;
         }
-
-        /* --- 页面主结构 (Flexbox 布局) --- */
+        .theme-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            background: var(--card-bg-color);
+            padding: 8px 10px;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px var(--shadow-color);
+            transition: transform 0.2s, background-color 0.3s;
+        }
+        .theme-switcher:hover {
+            transform: scale(1.1);
+        }
         .page-wrapper {
             display: flex;
             width: 100%;
             max-width: 1100px;
-            gap: 3rem; /* 左右两栏的间距 */
+            gap: 3rem;
             align-items: center;
             animation: fadeIn 1s ease-in-out;
         }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        /* --- 左侧：时间面板 --- */
         .time-panel {
-            flex: 0 0 250px; /* 固定宽度，不伸缩 */
+            flex: 0 0 250px;
             text-align: center;
         }
-
         #clock {
             font-size: 4rem;
             font-weight: 300;
-            color: #2c3e50;
+            color: var(--text-color-primary);
             margin-bottom: 1rem;
             letter-spacing: 2px;
         }
-
         #suggestion {
             font-size: 1rem;
-            color: #7f8c8d;
+            color: var(--text-color-tertiary);
             line-height: 1.7;
-            min-height: 50px; /* 防止文字切换时跳动 */
+            min-height: 50px;
         }
-        
-        /* --- 右侧：主内容区 --- */
-        .main-content {
-            flex: 1; /* 占据剩余空间 */
-            max-width: 700px;
-        }
-
-        /* --- 标题 --- */
+        .main-content { flex: 1; max-width: 700px; }
         h1 {
             font-family: 'Crimson Text', serif;
             font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 2rem;
-            color: #2c3e50;
+            color: var(--text-color-primary);
             text-align: center;
         }
-        
-        /* --- 内容卡片 --- */
         .card {
-            background-color: #ffffff;
+            background-color: var(--card-bg-color);
             padding: 2.5rem;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 10px 30px var(--shadow-color);
             margin-bottom: 2rem;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
         }
-        
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 15px 40px var(--shadow-color-hover);
         }
-
-        /* --- 每日名言部分 --- */
         #quote-container h2, #notes-container h2 {
             font-family: 'Crimson Text', serif;
-            font-size: 1.2rem;
-            color: #7f8c8d;
-            margin-bottom: 1.5rem;
-            font-weight: 400;
+            color: var(--text-color-tertiary);
             text-align: center;
         }
-
         #quote-text {
             font-family: 'Crimson Text', serif;
             font-style: italic;
             font-size: 1.6rem;
-            line-height: 1.6;
-            color: #34495e;
-            min-height: 80px;
+            color: var(--text-color-secondary);
             text-align: center;
+            min-height: 80px; /* 防止加载时跳动 */
         }
-
-        #quote-author {
-            margin-top: 1rem;
-            font-size: 1rem;
-            color: #95a5a6;
-            text-align: center;
-        }
-
-        /* --- 个人便签部分 --- */
+        #quote-author { color: var(--text-color-tertiary); text-align: center; }
         #user-note {
-            width: 100%;
-            border: none;
             background-color: transparent;
             font-size: 1.1rem;
-            color: #34495e;
-            text-align: center;
-            padding: 0.5rem;
-            outline: none;
-            border-bottom: 2px solid #ecf0f1;
-            transition: border-color 0.3s;
-            box-sizing: border-box;
+            color: var(--text-color-secondary);
+            border-bottom: 2px solid var(--border-color);
+            width: 100%; border-top: none; border-left: none; border-right: none; text-align: center; padding: 0.5rem; outline: none; transition: border-color 0.3s; box-sizing: border-box;
         }
-
-        #user-note:focus {
-            border-bottom-color: #3498db;
-        }
-        
-        #user-note::placeholder {
-            color: #bdc3c7;
-            font-style: italic;
-        }
-        
-        .save-status {
-            margin-top: 0.5rem;
-            font-size: 0.8rem;
-            color: #2ecc71;
-            opacity: 0;
-            transition: opacity 0.5s;
-            text-align: center;
-        }
-
-        /* --- 响应式设计：手机端适配 --- */
+        #user-note:focus { border-bottom-color: var(--accent-color); }
+        #user-note::placeholder { color: var(--text-color-tertiary); font-style: italic; }
+        .save-status { text-align: center; margin-top: 0.5rem; font-size: 0.8rem; color: #2ecc71; opacity: 0; transition: opacity 0.5s; }
         @media (max-width: 768px) {
-            .page-wrapper {
-                flex-direction: column; /* 垂直排列 */
-                gap: 2rem;
-            }
-            body {
-                padding: 1rem;
-            }
-            .time-panel {
-                flex-basis: auto; /* 高度自动 */
-                width: 100%;
-                margin-bottom: 1rem; /* 与下方卡片拉开距离 */
-            }
-            #clock {
-                font-size: 3.5rem;
-            }
-            .card {
-                padding: 1.5rem;
-            }
-            h1 {
-                font-size: 2rem;
-            }
-            #quote-text {
-                font-size: 1.3rem;
-            }
+            .page-wrapper { flex-direction: column; gap: 2rem; }
+            body { padding: 1rem; padding-top: 70px; }
+            .theme-switcher { top: 15px; right: 15px; }
+            .time-panel { flex-basis: auto; width: 100%; margin-bottom: 1rem; }
+            #clock { font-size: 3.5rem; }
+            .card { padding: 1.5rem; }
+            h1 { font-size: 2rem; }
+            #quote-text { font-size: 1.3rem; }
         }
     </style>
 </head>
 <body>
 
+    <div class="theme-switcher" id="theme-switcher">🌙</div>
+
     <div class="page-wrapper">
-        <!-- 左侧：时间面板 -->
         <aside class="time-panel">
             <div id="clock"></div>
             <p id="suggestion"></p>
         </aside>
-
-        <!-- 右侧：主内容 -->
         <main class="main-content">
             <h1>每日之光</h1>
-
             <div id="quote-container" class="card">
                 <h2>今日之语</h2>
-                <p id="quote-text">...</p>
+                <p id="quote-text">正在获取今日份的灵感...</p>
                 <p id="quote-author"></p>
             </div>
-            
             <div id="notes-container" class="card">
                 <h2>我的便签</h2>
                 <input type="text" id="user-note" placeholder="写下任何你想对自己说的话...">
@@ -209,95 +170,76 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            
+            // --- 主题切换功能 ---
+            const themeSwitcher = document.getElementById('theme-switcher');
+            const body = document.body;
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                body.classList.add('dark-mode');
+                themeSwitcher.textContent = '☀️';
+            }
+            themeSwitcher.addEventListener('click', function() {
+                body.classList.toggle('dark-mode');
+                if (body.classList.contains('dark-mode')) {
+                    themeSwitcher.textContent = '☀️';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    themeSwitcher.textContent = '🌙';
+                    localStorage.setItem('theme', 'light');
+                }
+            });
 
-            // --- 【新增】左侧时间和提示功能 ---
+            // --- 时间和提示功能 ---
             const clockElem = document.getElementById('clock');
             const suggestionElem = document.getElementById('suggestion');
-
-            function padZero(num) {
-                return num < 10 ? '0' + num : num;
-            }
-
+            function padZero(num) { return num < 10 ? '0' + num : num; }
             function updateTimeAndSuggestion() {
                 const now = new Date();
                 const hours = now.getHours();
-                const minutes = now.getMinutes();
-                const seconds = now.getSeconds();
-
-                // 更新时间
-                clockElem.textContent = `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`;
-
-                // 更新提示语
+                clockElem.textContent = `${padZero(hours)}:${padZero(now.getMinutes())}:${padZero(now.getSeconds())}`;
                 let suggestionText = '';
-                if (hours >= 5 && hours < 8) {
-                    suggestionText = "清晨好。新的一天开始了，记得给自己一个微笑。";
-                } else if (hours >= 8 && hours < 12) {
-                    suggestionText = "上午好。专注的时光总是过得很快，喝杯水休息一下吧。";
-                } else if (hours >= 12 && hours < 14) {
-                    suggestionText = "午后时光。好好吃饭，小憩片刻，为下午储备能量。";
-                } else if (hours >= 14 && hours < 18) {
-                    suggestionText = "下午好。如果有些疲惫，不妨站起来看看窗外。";
-                } else if (hours >= 18 && hours < 22) {
-                    suggestionText = "夜幕降临。放下忙碌，享受属于自己的宁静时刻吧。";
-                } else {
-                    suggestionText = "夜深了。世界睡了，请你也早点休息，晚安。";
-                }
+                if (hours >= 5 && hours < 8) { suggestionText = "清晨好。新的一天开始了，记得给自己一个微笑。"; } 
+                else if (hours >= 8 && hours < 12) { suggestionText = "上午好。专注的时光总是过得很快，喝杯水休息一下吧。"; } 
+                else if (hours >= 12 && hours < 14) { suggestionText = "午后时光。好好吃饭，小憩片刻，为下午储备能量。"; } 
+                else if (hours >= 14 && hours < 18) { suggestionText = "下午好。如果有些疲惫，不妨站起来看看窗外。"; } 
+                else if (hours >= 18 && hours < 22) { suggestionText = "夜幕降临。放下忙碌，享受属于自己的宁静时刻吧。"; } 
+                else { suggestionText = "夜深了。世界睡了，请你也早点休息，晚安。"; }
                 suggestionElem.textContent = suggestionText;
             }
 
-            // --- 每日一句 功能 ---
-            const quotes = [
-                { text: "当你真心渴望某样东西时，整个宇宙都会联合起来帮你完成。", author: "— 保罗·科埃略《牧羊少年奇幻之旅》" },
-                { text: "真正重要的东西，用眼睛是看不见的，要用心去看。", author: "— 安托万·德·圣-埃克苏佩里《小王子》" },
-                { text: "我不能回到昨天，因为那时的我跟现在不一样了。", author: "— 刘易斯·卡罗尔《爱丽丝梦游仙境》" },
-                { text: "永远不要放弃尝试，否则你永远不会知道自己能做到什么。", author: "— 理查德·耶茨《革命之路》" },
-                { text: "明天又是新的一天了。", author: "— 玛格丽特·米切尔《乱世佳人》" },
-                { text: "一个人可以被毁灭，但不能被打败。", author: "— 海明威《老人与海》" },
-                { text: "世界上只有一种英雄主义，那就是在认清生活真相之后依然热爱生活。", author: "— 罗曼·罗兰《米开朗琪罗传》" },
-                { text: "所有的大人都曾经是小孩，虽然，只有少数的人记得。", author: "— 安托万·德·圣-埃克苏佩里《小王子》" },
-                { text: "如果你什么都不尝试，你就不会失败...但过你想要的生活是需要骨气的。", author: "— 理查德·耶茨《革命之路》" },
-                { text: "只要想着快乐的事情，你就能飞起来。", author: "— J.M. 巴里《彼得·潘》" },
-                { text: "人不是为失败而生的。", author: "— 海明威《老人与海》" },
-                { text: "心在哪，财富就在哪。", author: "— 保罗·科埃略《牧羊少年奇幻之旅》" }
-            ];
-
+            // --- 【重大更新】每日一句功能 -> 自动获取 ---
             const quoteTextElem = document.getElementById('quote-text');
             const quoteAuthorElem = document.getElementById('quote-author');
 
             function getDailyQuote() {
-                const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
-                const quoteIndex = dayOfYear % quotes.length;
-                const quote = quotes[quoteIndex];
-                quoteTextElem.textContent = `“${quote.text}”`;
-                quoteAuthorElem.textContent = quote.author;
+                fetch('https://v1.hitokoto.cn/?c=i&c=d&encode=json') // 请求API
+                    .then(response => response.json()) // 将返回的响应转为JSON格式
+                    .then(data => {
+                        // 成功获取数据后，更新页面内容
+                        quoteTextElem.textContent = `“${data.hitokoto}”`;
+                        quoteAuthorElem.textContent = `— ${data.from_who || ''}《${data.from}》`;
+                    })
+                    .catch(error => {
+                        // 如果获取失败，显示一句备用名言
+                        console.error('获取名言失败:', error);
+                        quoteTextElem.textContent = "“世界上只有一种英雄主义，那就是在认清生活真相之后依然热爱生活。”";
+                        quoteAuthorElem.textContent = "— 罗曼·罗兰";
+                    });
             }
 
-            // --- 个人便签 功能 ---
+            // --- 个人便签功能 ---
             const userNoteInput = document.getElementById('user-note');
             const saveStatusElem = document.getElementById('save-status');
-            
-            function loadNote() {
-                const savedNote = localStorage.getItem('userPersonalNote');
-                if (savedNote) { userNoteInput.value = savedNote; }
-            }
-            
+            function loadNote() { const savedNote = localStorage.getItem('userPersonalNote'); if (savedNote) { userNoteInput.value = savedNote; } }
             let saveTimeout;
-            userNoteInput.addEventListener('input', function() {
-                clearTimeout(saveTimeout);
-                localStorage.setItem('userPersonalNote', userNoteInput.value);
-                saveStatusElem.style.opacity = 1;
-                saveTimeout = setTimeout(() => {
-                    saveStatusElem.style.opacity = 0;
-                }, 2000);
-            });
+            userNoteInput.addEventListener('input', function() { clearTimeout(saveTimeout); localStorage.setItem('userPersonalNote', userNoteInput.value); saveStatusElem.style.opacity = 1; saveTimeout = setTimeout(() => { saveStatusElem.style.opacity = 0; }, 2000); });
 
             // --- 初始化页面 ---
-            updateTimeAndSuggestion(); // 立即执行一次以避免空白
-            setInterval(updateTimeAndSuggestion, 1000); // 每秒更新一次
-            
-            getDailyQuote();
+            updateTimeAndSuggestion();
+            setInterval(updateTimeAndSuggestion, 1000);
+            getDailyQuote(); // 页面加载时执行一次获取
             loadNote();
-
         });
     </script>
 </body>
