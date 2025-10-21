@@ -238,22 +238,21 @@
             
             const counterElem = document.getElementById('visitor-counter');
             function updateVisitorCount() {
-                const namespace = 'thesky111423';
-                const key = 'website-visitor-uv-v3';
-                const visitedFlag = `visited_${key}`;
+                const counterId = 'thesky111423.github.io'; 
+                const visitedFlag = `visited_${counterId}`;
 
                 if (localStorage.getItem(visitedFlag)) {
-                    fetch(`https://api.countapi.xyz/get/${namespace}/${key}`)
+                    fetch(`https://visitor.pandask.top/counter/get/${counterId}`)
                         .then(response => response.json())
                         .then(data => {
-                            counterElem.innerHTML = `您是第 <strong>${data.value}</strong> 位访客`;
+                            counterElem.innerHTML = `您是第 <strong>${data.count}</strong> 位访客`;
                         })
                         .catch(handleCountError);
                 } else {
-                    fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`)
+                    fetch(`https://visitor.pandask.top/counter/update/${counterId}`)
                         .then(response => response.json())
                         .then(data => {
-                            counterElem.innerHTML = `您是第 <strong>${data.value}</strong> 位访客`;
+                            counterElem.innerHTML = `您是第 <strong>${data.count}</strong> 位访客`;
                             localStorage.setItem(visitedFlag, 'true');
                         })
                         .catch(handleCountError);
