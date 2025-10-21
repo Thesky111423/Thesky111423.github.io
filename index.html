@@ -9,9 +9,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&family=Noto+Sans+SC:wght@300;400&display=swap" rel="stylesheet">
 
-    <!-- 【更新】引入“不蒜子”计数服务的脚本 -->
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
     <style>
         :root {
             --bg-color: #f4f4f9;
@@ -98,6 +95,11 @@
             font-size: 0.9rem;
             color: var(--text-color-tertiary);
         }
+        #thank-you-note {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-color-tertiary);
+        }
         .main-content { flex: 1; max-width: 700px; }
         h1 {
             font-family: 'Crimson Text', serif;
@@ -161,11 +163,8 @@
         <aside class="time-panel">
             <div id="clock"></div>
             <p id="suggestion"></p>
-            <!-- 【更新】计数器的HTML结构已改为不蒜子要求的格式 -->
-            <p id="visitor-counter">
-                您是第 <strong id="busuanzi_value_site_uv"></strong> 位访客
-            </p>
-            <p>谢谢你的访问!!</p>
+            <p id="visitor-counter">正在统计访客...</p>
+            <p id="thank-you-note">谢谢你的访问!!</p>
         </aside>
         <main class="main-content">
             <h1>每日一句话</h1>
@@ -182,12 +181,9 @@
         </main>
     </div>
 
-    <!-- 【更新】引入“今日诗词”的官方JS库 -->
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             
-            // --- 主题切换功能 (保持不变) ---
             const themeSwitcher = document.getElementById('theme-switcher');
             const body = document.body;
             const savedTheme = localStorage.getItem('theme');
@@ -201,7 +197,6 @@
                 }
             });
 
-            // --- 时间和提示功能 (保持不变) ---
             const clockElem = document.getElementById('clock');
             const suggestionElem = document.getElementById('suggestion');
             function padZero(num) { return num < 10 ? '0' + num : num; }
@@ -218,48 +213,63 @@
                 suggestionElem.textContent = suggestionText;
             }
 
-            // --- 【更新】每日一句功能 -> 改用“今日诗词”SDK ---
             const quoteTextElem = document.getElementById('quote-text');
-const quoteAuthorElem = document.getElementById('quote-author');
+            const quoteAuthorElem = document.getElementById('quote-author');
+            function getDailyQuote() {
+                fetch('https://v1.hitokoto.cn/?c=d&c=k&encode=json')
+                    .then(response => response.json())
+                    .then(data => {
+                        const authorText = data.from_who ? `${data.from_who} ` : '';
+                        quoteTextElem.textContent = `“${data.hitokoto}”`;
+                        quoteAuthorElem.textContent = `— ${authorText}《${data.from}》`;
+                    })
+                    .catch(error => {
+                        console.error('获取名言失败:', error);
+                        quoteTextElem.textContent = "“一个人可以被毁灭，但不能被打败。”";
+                        quoteAuthorElem.textContent = "— 海明威《老人与海》";
+                    });
+            }
 
-function getDailyQuote() {
-    // 我们重新使用“一言”API，并指定只获取文学(d)、哲学(k)分类
-    fetch('https://v1.hitokoto.cn/?c=d&c=k&encode=json')
-        .then(response => response.json())
-        .then(data => {
-            // 成功获取数据后，更新页面内容
-            quoteTextElem.textContent = `“${data.hitokoto}”`;
-            // 如果句子有作者信息，就显示 "作者《出处》"，否则只显示《出处》
-            const authorText = data.from_who ? `${data.from_who} ` : '';
-            quoteAuthorElem.textContent = `— ${authorText}《${data.from}》`;
-        })
-        .catch(error => {
-            // 如果获取失败，显示一句备用名言
-            console.error('获取名言失败:', error);
-            quoteTextElem.textContent = "“一个人可以被毁灭，但不能被打败。”";
-            quoteAuthorElem.textContent = "— 海明威《老人与海》";
-        });
-}
-
-            // --- 个人便签功能 (保持不变) ---
             const userNoteInput = document.getElementById('user-note');
             const saveStatusElem = document.getElementById('save-status');
             function loadNote() { const savedNote = localStorage.getItem('userPersonalNote'); if (savedNote) { userNoteInput.value = savedNote; } }
             let saveTimeout;
             userNoteInput.addEventListener('input', function() { clearTimeout(saveTimeout); localStorage.setItem('userPersonalNote', userNoteInput.value); saveStatusElem.style.opacity = 1; saveTimeout = setTimeout(() => { saveStatusElem.style.opacity = 0; }, 2000); });
             
-            // --- 【更新】访客计数功能 -> 已完全交给“不蒜子”脚本，无需JS代码 ---
-            // 我们之前写的 updateVisitorCount 函数现在可以安全地删除了。
+            const counterElem = document.getElementById('visitor-counter');
+            function updateVisitorCount() {
+                const namespace = 'thesky111423';
+                const key = 'website-visitor-uv-v3';
+                const visitedFlag = `visited_${key}`;
 
-            // --- 初始化页面 ---
+                if (localStorage.getItem(visitedFlag)) {
+                    fetch(`https://api.countapi.xyz/get/${namespace}/${key}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            counterElem.innerHTML = `您是第 <strong>${data.value}</strong> 位访客`;
+                        })
+                        .catch(handleCountError);
+                } else {
+                    fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            counterElem.innerHTML = `您是第 <strong>${data.value}</strong> 位访客`;
+                            localStorage.setItem(visitedFlag, 'true');
+                        })
+                        .catch(handleCountError);
+                }
+            }
+            function handleCountError(error) {
+                console.error("计数器API请求失败:", error);
+                counterElem.textContent = "欢迎您的到访";
+            }
+
             updateTimeAndSuggestion();
             setInterval(updateTimeAndSuggestion, 1000);
             getDailyQuote();
             loadNote();
+            updateVisitorCount();
         });
     </script>
 </body>
 </html>
-
-
-
