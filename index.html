@@ -163,6 +163,7 @@
         <aside class="time-panel">
             <div id="clock"></div>
             <p id="suggestion"></p>
+            <!-- 【重大更新】计数器HTML结构已简化 -->
             <p id="visitor-counter">正在统计访客...</p>
             <p id="thank-you-note">谢谢你的访问!!</p>
         </aside>
@@ -184,6 +185,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             
+            // --- 主题切换功能 (保持不变) ---
             const themeSwitcher = document.getElementById('theme-switcher');
             const body = document.body;
             const savedTheme = localStorage.getItem('theme');
@@ -197,6 +199,7 @@
                 }
             });
 
+            // --- 时间和提示功能 (保持不变) ---
             const clockElem = document.getElementById('clock');
             const suggestionElem = document.getElementById('suggestion');
             function padZero(num) { return num < 10 ? '0' + num : num; }
@@ -213,6 +216,7 @@
                 suggestionElem.textContent = suggestionText;
             }
 
+            // --- 每日一句功能 (保持不变) ---
             const quoteTextElem = document.getElementById('quote-text');
             const quoteAuthorElem = document.getElementById('quote-author');
             function getDailyQuote() {
@@ -230,29 +234,33 @@
                     });
             }
 
+            // --- 个人便签功能 (保持不变) ---
             const userNoteInput = document.getElementById('user-note');
             const saveStatusElem = document.getElementById('save-status');
             function loadNote() { const savedNote = localStorage.getItem('userPersonalNote'); if (savedNote) { userNoteInput.value = savedNote; } }
             let saveTimeout;
             userNoteInput.addEventListener('input', function() { clearTimeout(saveTimeout); localStorage.setItem('userPersonalNote', userNoteInput.value); saveStatusElem.style.opacity = 1; saveTimeout = setTimeout(() => { saveStatusElem.style.opacity = 0; }, 2000); });
             
+            // --- 【重大更新】访客计数功能 (使用稳定可靠的CountAPI) ---
             const counterElem = document.getElementById('visitor-counter');
             function updateVisitorCount() {
-                const counterId = 'thesky111423.github.io'; 
-                const visitedFlag = `visited_${counterId}`;
+                const namespace = 'thesky111423';
+                // 【清零技巧】我们使用一个全新的key，确保计数从0开始
+                const key = 'website-final-uv-count';
+                const visitedFlag = `visited_${key}`;
 
                 if (localStorage.getItem(visitedFlag)) {
-                    fetch(`https://visitor.pandask.top/counter/get/${counterId}`)
+                    fetch(`https://api.countapi.xyz/get/${namespace}/${key}`)
                         .then(response => response.json())
                         .then(data => {
-                            counterElem.innerHTML = `您是第 <strong>${data.count}</strong> 位访客`;
+                            counterElem.innerHTML = `您是第 <strong>${data.value}</strong> 位访客`;
                         })
                         .catch(handleCountError);
                 } else {
-                    fetch(`https://visitor.pandask.top/counter/update/${counterId}`)
+                    fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`)
                         .then(response => response.json())
                         .then(data => {
-                            counterElem.innerHTML = `您是第 <strong>${data.count}</strong> 位访客`;
+                            counterElem.innerHTML = `您是第 <strong>${data.value}</strong> 位访客`;
                             localStorage.setItem(visitedFlag, 'true');
                         })
                         .catch(handleCountError);
@@ -263,11 +271,12 @@
                 counterElem.textContent = "欢迎您的到访";
             }
 
+            // --- 初始化页面 ---
             updateTimeAndSuggestion();
             setInterval(updateTimeAndSuggestion, 1000);
             getDailyQuote();
             loadNote();
-            updateVisitorCount();
+            updateVisitorCount(); // 调用最终版的计数函数
         });
     </script>
 </body>
