@@ -1,3 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日之光 | Daily Spark</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&family=Noto+Sans+SC:wght@300;400&display=swap" rel="stylesheet">
+
+    <!-- 【更新】引入“不蒜子”计数服务的脚本 -->
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #f4f4f9;
+            --card-bg-color: #ffffff;
+            --text-color-primary: #2c3e50;
+            --text-color-secondary: #34495e;
+            --text-color-tertiary: #7f8c8d;
+            --border-color: #ecf0f1;
+            --accent-color: #3498db;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --shadow-color-hover: rgba(0, 0, 0, 0.12);
+        }
+        body.dark-mode {
+            --bg-color: #1a1a2e;
+            --card-bg-color: #16213e;
+            --text-color-primary: #e0fbfc;
+            --text-color-secondary: #c9d6f0;
+            --text-color-tertiary: #9ba4b4;
+            --border-color: #4a4e69;
+            --accent-color: #3d5af1;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+            --shadow-color-hover: rgba(0, 0, 0, 0.3);
+        }
+        body {
+            font-family: 'Lato', 'Noto Sans SC', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color-primary);
+            margin: 0;
+            padding: 2rem;
+            min-height: 100vh;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .theme-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            background: var(--card-bg-color);
+            padding: 8px 10px;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px var(--shadow-color);
+            transition: transform 0.2s, background-color 0.3s;
+            z-index: 10;
+        }
+        .theme-switcher:hover {
+            transform: scale(1.1);
+        }
+        .page-wrapper {
+            display: flex;
+            width: 100%;
+            max-width: 1100px;
+            gap: 3rem;
+            align-items: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .time-panel {
+            flex: 0 0 250px;
+            text-align: center;
+        }
+        #clock {
+            font-size: 4rem;
+            font-weight: 300;
+            color: var(--text-color-primary);
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+        }
+        #suggestion {
+            font-size: 1rem;
+            color: var(--text-color-tertiary);
+            line-height: 1.7;
+            min-height: 50px;
+        }
+        #visitor-counter {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-color-tertiary);
+        }
+        .main-content { flex: 1; max-width: 700px; }
+        h1 {
+            font-family: 'Crimson Text', serif;
+            font-size: 2.5rem;
+            color: var(--text-color-primary);
+            text-align: center;
+        }
+        .card {
+            background-color: var(--card-bg-color);
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            margin-bottom: 2rem;
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px var(--shadow-color-hover);
+        }
+        #quote-container h2, #notes-container h2 {
+            font-family: 'Crimson Text', serif;
+            color: var(--text-color-tertiary);
+            text-align: center;
+        }
+        #quote-text {
+            font-family: 'Crimson Text', serif;
+            font-style: italic;
+            font-size: 1.6rem;
+            color: var(--text-color-secondary);
+            text-align: center;
+            min-height: 80px;
+        }
+        #quote-author { color: var(--text-color-tertiary); text-align: center; }
+        #user-note {
+            background-color: transparent;
+            font-size: 1.1rem;
+            color: var(--text-color-secondary);
+            border-bottom: 2px solid var(--border-color);
+            width: 100%; border-top: none; border-left: none; border-right: none; text-align: center; padding: 0.5rem; outline: none; transition: border-color 0.3s; box-sizing: border-box;
+        }
+        #user-note:focus { border-bottom-color: var(--accent-color); }
+        #user-note::placeholder { color: var(--text-color-tertiary); font-style: italic; }
+        .save-status { text-align: center; margin-top: 0.5rem; font-size: 0.8rem; color: #2ecc71; opacity: 0; transition: opacity 0.5s; }
+        @media (max-width: 768px) {
+            .page-wrapper { flex-direction: column; gap: 2rem; }
+            body { padding: 1rem; padding-top: 70px; }
+            .theme-switcher { top: 15px; right: 15px; }
+            .time-panel { flex-basis: auto; width: 100%; margin-bottom: 0; }
+            #clock { font-size: 3.5rem; }
+            .card { padding: 1.5rem; }
+            h1 { font-size: 2rem; }
+            #quote-text { font-size: 1.3rem; }
+        }
+    </style>
+</head>
 <body>
 
     <div class="theme-switcher" id="theme-switcher">🌙</div>
@@ -6,16 +161,15 @@
         <aside class="time-panel">
             <div id="clock"></div>
             <p id="suggestion"></p>
-            <!-- 【重大更新】HTML结构已改为不蒜子要求的格式 -->
+            <!-- 【更新】计数器的HTML结构已改为不蒜子要求的格式 -->
             <p id="visitor-counter">
-                您是第 <strong id="busuanzi_value_site_uv"></strong> 位访客
+                您是第 <strong id="busuanzi_value_site_pv"></strong> 位访客
             </p>
-            <p id="thank-you-note">谢谢你的访问!!</p>
         </aside>
         <main class="main-content">
-            <h1>每日一句话</h1>
+            <h1>每日之光</h1>
             <div id="quote-container" class="card">
-                <h2>以下便是</h2>
+                <h2>今日之语</h2>
                 <p id="quote-text">正在寻找书中的智慧...</p>
                 <p id="quote-author"></p>
             </div>
@@ -27,9 +181,12 @@
         </main>
     </div>
 
+    <!-- 【更新】引入“今日诗词”的官方JS库 -->
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             
+            // --- 主题切换功能 (保持不变) ---
             const themeSwitcher = document.getElementById('theme-switcher');
             const body = document.body;
             const savedTheme = localStorage.getItem('theme');
@@ -43,6 +200,7 @@
                 }
             });
 
+            // --- 时间和提示功能 (保持不变) ---
             const clockElem = document.getElementById('clock');
             const suggestionElem = document.getElementById('suggestion');
             function padZero(num) { return num < 10 ? '0' + num : num; }
@@ -59,31 +217,40 @@
                 suggestionElem.textContent = suggestionText;
             }
 
+            // --- 【更新】每日一句功能 -> 改用“今日诗词”SDK ---
             const quoteTextElem = document.getElementById('quote-text');
-            const quoteAuthorElem = document.getElementById('quote-author');
-            function getDailyQuote() {
-                fetch('https://v1.hitokoto.cn/?c=d&c=k&encode=json')
-                    .then(response => response.json())
-                    .then(data => {
-                        const authorText = data.from_who ? `${data.from_who} ` : '';
-                        quoteTextElem.textContent = `“${data.hitokoto}”`;
-                        quoteAuthorElem.textContent = `— ${authorText}《${data.from}》`;
-                    })
-                    .catch(error => {
-                        console.error('获取名言失败:', error);
-                        quoteTextElem.textContent = "“一个人可以被毁灭，但不能被打败。”";
-                        quoteAuthorElem.textContent = "— 海明威《老人与海》";
-                    });
-            }
+const quoteAuthorElem = document.getElementById('quote-author');
 
+function getDailyQuote() {
+    // 我们重新使用“一言”API，并指定只获取文学(d)、哲学(k)分类
+    fetch('https://v1.hitokoto.cn/?c=d&c=k&encode=json')
+        .then(response => response.json())
+        .then(data => {
+            // 成功获取数据后，更新页面内容
+            quoteTextElem.textContent = `“${data.hitokoto}”`;
+            // 如果句子有作者信息，就显示 "作者《出处》"，否则只显示《出处》
+            const authorText = data.from_who ? `${data.from_who} ` : '';
+            quoteAuthorElem.textContent = `— ${authorText}《${data.from}》`;
+        })
+        .catch(error => {
+            // 如果获取失败，显示一句备用名言
+            console.error('获取名言失败:', error);
+            quoteTextElem.textContent = "“一个人可以被毁灭，但不能被打败。”";
+            quoteAuthorElem.textContent = "— 海明威《老人与海》";
+        });
+}
+
+            // --- 个人便签功能 (保持不变) ---
             const userNoteInput = document.getElementById('user-note');
             const saveStatusElem = document.getElementById('save-status');
             function loadNote() { const savedNote = localStorage.getItem('userPersonalNote'); if (savedNote) { userNoteInput.value = savedNote; } }
             let saveTimeout;
             userNoteInput.addEventListener('input', function() { clearTimeout(saveTimeout); localStorage.setItem('userPersonalNote', userNoteInput.value); saveStatusElem.style.opacity = 1; saveTimeout = setTimeout(() => { saveStatusElem.style.opacity = 0; }, 2000); });
             
-            // 【重大更新】JavaScript中的计数函数已完全移除
+            // --- 【更新】访客计数功能 -> 已完全交给“不蒜子”脚本，无需JS代码 ---
+            // 我们之前写的 updateVisitorCount 函数现在可以安全地删除了。
 
+            // --- 初始化页面 ---
             updateTimeAndSuggestion();
             setInterval(updateTimeAndSuggestion, 1000);
             getDailyQuote();
@@ -91,3 +258,4 @@
         });
     </script>
 </body>
+</html>
