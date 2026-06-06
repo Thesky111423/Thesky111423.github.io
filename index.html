@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎁 送你一个神秘礼物</title>
+    <meta name="description" content="一个特别的礼物，请查收">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    <div class="floating-elements"></div>
+
+    <div class="container">
+        <div class="intro-screen" id="introScreen">
+            <div class="gift-box" id="giftBox">
+                <div class="gift-lid">
+                    <div class="lid-top"></div>
+                    <div class="lid-ribbon"></div>
+                </div>
+                <div class="gift-body">
+                    <div class="gift-ribbon-v"></div>
+                    <div class="gift-ribbon-h"></div>
+                    <div class="gift-bow"></div>
+                </div>
+                <div class="gift-glow"></div>
+            </div>
+            <p class="intro-text">🎁 送你一个礼物，点击拆开~</p>
+        </div>
+
+        <div class="quiz-section" id="quizSection">
+            <div class="quiz-container">
+                <div class="quiz-header">
+                    <div class="quiz-icon">💭</div>
+                    <h2>一个有趣的小测试</h2>
+                    <p>想看看你有多了解我吗？</p>
+                </div>
+
+                <div class="quiz-question" id="question1">
+                    <div class="question-number">第 1 题</div>
+                    <h3>我们是在哪里认识的？</h3>
+                    <div class="options">
+                        <button class="option-btn correct" data-score="10">A. 抖音评论</button>
+                        <button class="option-btn" data-score="0">B. 微信</button>
+                        <button class="option-btn" data-score="0">C. 微博</button>
+                        <button class="option-btn" data-score="0">D. 探探</button>
+                    </div>
+                </div>
+
+                <div class="quiz-question hidden" id="question2">
+                    <div class="question-number">第 2 题</div>
+                    <h3>我在哪个城市？</h3>
+                    <div class="options">
+                        <button class="option-btn" data-score="0">A. 河南</button>
+                        <button class="option-btn correct" data-score="10">B. 湖北</button>
+                        <button class="option-btn" data-score="0">C. 河北</button>
+                        <button class="option-btn" data-score="0">D. 湖南</button>
+                    </div>
+                </div>
+
+                <div class="quiz-question hidden" id="question3">
+                    <div class="question-number">第 3 题</div>
+                    <h3>我们的故事开始多久了？</h3>
+                    <div class="options">
+                        <button class="option-btn" data-score="0">A. 1个月</button>
+                        <button class="option-btn" data-score="0">B. 3个月</button>
+                        <button class="option-btn correct" data-score="10">C. 15天</button>
+                        <button class="option-btn" data-score="0">D. 半年</button>
+                    </div>
+                </div>
+
+                <div class="quiz-question hidden" id="question4">
+                    <div class="question-number">第 4 题</div>
+                    <h3>我觉得你是一个怎样的人？</h3>
+                    <div class="options">
+                        <button class="option-btn" data-score="5">A. 可爱</button>
+                        <button class="option-btn" data-score="5">B. 有趣</button>
+                        <button class="option-btn" data-score="5">C. 特别</button>
+                        <button class="option-btn correct" data-score="10">D. 以上都是</button>
+                    </div>
+                </div>
+
+                <div class="quiz-result hidden" id="quizResult">
+                    <div class="result-score" id="resultScore">0</div>
+                    <div class="result-text">
+                        <p id="resultMessage">正在计算...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="message-section hidden" id="messageSection">
+            <div class="message-container">
+                <div class="message-icon">💌</div>
+                <h2>给你的悄悄话</h2>
+                <div class="message-card">
+                    <div class="message-content">
+                        <p class="message-text">
+                            嘿，发现这个小秘密了吗？
+                        </p>
+                        <p class="message-text">
+                            从抖音评论认识你那天起，
+                            <br>我就觉得你很特别 ✨
+                        </p>
+                        <p class="message-text">
+                            虽然你在河南，我在湖北，
+                            <br>隔着好几百公里...
+                            <br>但好像也没那么远呢 😊
+                        </p>
+                        <p class="message-text">
+                            认识你才15天，
+                            <br>却好像已经认识了很久
+                        </p>
+                        <p class="message-text highlight">
+                            不知道你有没有这种感觉？
+                        </p>
+                    </div>
+                </div>
+                <button class="reply-btn" id="replyBtn">👀 看到这里了</button>
+            </div>
+        </div>
+
+        <div class="final-section hidden" id="finalSection">
+            <div class="final-container">
+                <div class="heart-rain"></div>
+                <div class="final-content">
+                    <div class="couple-emoji">👫</div>
+                    <h2>河南 ❤️ 湖北</h2>
+                    <p class="distance-text">相距 600+ 公里</p>
+                    <div class="countdown">
+                        <div class="count-item">
+                            <span class="count-num" id="days">15</span>
+                            <span class="count-label">天</span>
+                        </div>
+                        <div class="count-divider">:</div>
+                        <div class="count-item">
+                            <span class="count-num" id="hours">0</span>
+                            <span class="count-label">时</span>
+                        </div>
+                        <div class="count-divider">:</div>
+                        <div class="count-item">
+                            <span class="count-num" id="minutes">0</span>
+                            <span class="count-label">分</span>
+                        </div>
+                    </div>
+                    <p class="final-message">
+                        这是我们认识的时间
+                        <br>也是我心动的时间 💫
+                    </p>
+                    <div class="future-text">
+                        <p>未来的每一天</p>
+                        <p>我想继续认识你更多一点</p>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn yes-btn" id="yesBtn">💕 我也这么觉得</button>
+                        <button class="action-btn maybe-btn" id="maybeBtn">🤔 让我想想</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="success-screen hidden" id="successScreen">
+            <div class="success-container">
+                <div class="confetti"></div>
+                <div class="success-emoji">🎉</div>
+                <h2>太好了！</h2>
+                <p class="success-text">那我们故事...</p>
+                <p class="success-text highlight">才刚刚开始 ✨</p>
+                <div class="future-hearts">
+                    <span>❤️</span>
+                    <span>💕</span>
+                    <span>💗</span>
+                    <span>💖</span>
+                    <span>💝</span>
+                </div>
+                <p class="wait-text">期待我们的下一次见面~</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
