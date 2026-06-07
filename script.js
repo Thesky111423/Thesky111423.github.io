@@ -1,222 +1,193 @@
 document.addEventListener('DOMContentLoaded', () => {
     createParticles();
-    initGiftBox();
     initQuiz();
-    initMessage();
-    initFinalSection();
-    initSuccessScreen();
 });
 
 function createParticles() {
     const particlesContainer = document.getElementById('particles');
-    const colors = ['rgba(255, 182, 193, 0.6)', 'rgba(255, 107, 138, 0.6)', 'rgba(102, 126, 234, 0.6)'];
+    const colors = ['rgba(255, 182, 193, 0.4)', 'rgba(102, 126, 234, 0.4)', 'rgba(118, 75, 162, 0.4)'];
     
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 25; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
         particle.style.left = Math.random() * 100 + '%';
         particle.style.top = Math.random() * 100 + '%';
-        particle.style.width = Math.random() * 8 + 4 + 'px';
+        particle.style.width = Math.random() * 10 + 5 + 'px';
         particle.style.height = particle.style.width;
         particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-        particle.style.animationDelay = Math.random() * 8 + 's';
-        particle.style.animationDuration = (Math.random() * 5 + 6) + 's';
+        particle.style.animationDelay = Math.random() * 10 + 's';
+        particle.style.animationDuration = (Math.random() * 5 + 8) + 's';
         particlesContainer.appendChild(particle);
     }
 }
 
-function initGiftBox() {
-    const giftBox = document.getElementById('giftBox');
+function initQuiz() {
+    const startBtn = document.getElementById('startBtn');
     const introScreen = document.getElementById('introScreen');
     const quizSection = document.getElementById('quizSection');
+    const calculating = document.getElementById('calculating');
+    const resultSection = document.getElementById('resultSection');
+    const easterEgg = document.getElementById('easterEgg');
     
-    giftBox.addEventListener('click', () => {
-        giftBox.classList.add('opened');
-        
-        setTimeout(() => {
-            introScreen.classList.add('hidden');
-            quizSection.classList.remove('hidden');
-        }, 600);
-    });
-}
-
-function initQuiz() {
     const questions = document.querySelectorAll('.quiz-question');
-    const quizResult = document.getElementById('quizResult');
-    const resultScore = document.getElementById('resultScore');
-    const resultMessage = document.getElementById('resultMessage');
-    const messageSection = document.getElementById('messageSection');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
     
     let currentQuestion = 0;
-    let totalScore = 0;
-    
+    let correctCount = 0;
+    let answers = [];
+    let selectedPerfect = false;
+
+    // 开始按钮
+    startBtn.addEventListener('click', () => {
+        introScreen.classList.add('hidden');
+        quizSection.classList.remove('hidden');
+    });
+
+    // 问题选项点击
     questions.forEach((question, index) => {
         const options = question.querySelectorAll('.option-btn');
         
         options.forEach(option => {
             option.addEventListener('click', () => {
-                const score = parseInt(option.dataset.score);
-                totalScore += score;
-                
+                // 禁用所有选项
                 options.forEach(opt => opt.disabled = true);
-                option.classList.add('correct');
                 
+                // 标记选中的选项
+                option.classList.add('selected');
+                
+                // 检查是否正确
+                const isCorrect = option.dataset.correct === 'true';
+                if (isCorrect) {
+                    correctCount++;
+                    option.classList.add('correct');
+                } else {
+                    option.classList.add('wrong');
+                    // 显示正确答案
+                    options.forEach(opt => {
+                        if (opt.dataset.correct === 'true') {
+                            opt.classList.add('correct');
+                        }
+                    });
+                }
+                
+                // 记录答案
+                answers.push({
+                    question: index + 1,
+                    correct: isCorrect,
+                    answer: option.textContent
+                });
+                
+                // 检查是否选了"超级完美"
+                if (option.dataset.score === '15') {
+                    selectedPerfect = true;
+                }
+                
+                // 延迟后进入下一题或显示结果
                 setTimeout(() => {
                     if (index < questions.length - 1) {
+                        // 下一题
                         question.classList.add('hidden');
                         questions[index + 1].classList.remove('hidden');
-                    } else {
-                        question.classList.add('hidden');
-                        quizResult.classList.remove('hidden');
+                        currentQuestion = index + 1;
                         
-                        let displayScore = 0;
-                        const scoreInterval = setInterval(() => {
-                            displayScore += 5;
-                            resultScore.textContent = displayScore;
-                            if (displayScore >= totalScore) {
-                                clearInterval(scoreInterval);
-                                
-                                setTimeout(() => {
-                                    if (totalScore >= 35) {
-                                        resultMessage.textContent = '太棒了！你真的很了解我 💕';
-                                    } else if (totalScore >= 20) {
-                                        resultMessage.textContent = '还不错哦，继续加油！✨';
-                                    } else {
-                                        resultMessage.textContent = '哈哈，看来要多聊聊了 😄';
-                                    }
-                                    
-                                    setTimeout(() => {
-                                        quizResult.classList.add('hidden');
-                                        messageSection.classList.remove('hidden');
-                                    }, 2000);
-                                }, 1000);
-                            }
-                        }, 100);
+                        // 更新进度条
+                        progressFill.style.width = ((currentQuestion + 1) / questions.length * 100) + '%';
+                        progressText.textContent = `${currentQuestion + 1} / ${questions.length}`;
+                    } else {
+                        // 显示计算中
+                        quizSection.classList.add('hidden');
+                        calculating.classList.remove('hidden');
+                        
+                        // 3秒后显示结果
+                        setTimeout(() => {
+                            calculating.classList.add('hidden');
+                            showResult();
+                        }, 3000);
                     }
-                }, 800);
+                }, 1000);
             });
         });
     });
-}
 
-function initMessage() {
-    const replyBtn = document.getElementById('replyBtn');
-    const messageSection = document.getElementById('messageSection');
-    const finalSection = document.getElementById('finalSection');
-    
-    replyBtn.addEventListener('click', () => {
-        messageSection.classList.add('hidden');
-        finalSection.classList.remove('hidden');
-        startCountdown();
-        createFallingHearts();
-    });
-}
-
-function initFinalSection() {
-    const yesBtn = document.getElementById('yesBtn');
-    const maybeBtn = document.getElementById('maybeBtn');
-    const finalSection = document.getElementById('finalSection');
-    const successScreen = document.getElementById('successScreen');
-    
-    yesBtn.addEventListener('click', () => {
-        finalSection.classList.add('hidden');
-        successScreen.classList.remove('hidden');
-        createConfetti();
-        createSuccessHearts();
-    });
-    
-    maybeBtn.addEventListener('click', () => {
-        const messages = [
-            '真的不考慮一下嗎？🥺',
-            '好吧，我會等你的 💫',
-            '給你時間想想～ 🤗',
-            '不管怎樣，我都在 💕'
-        ];
-        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-        maybeBtn.textContent = randomMessage;
-        maybeBtn.style.background = 'linear-gradient(135deg, #ffd700, #ffec8b)';
-        maybeBtn.style.color = '#333';
-    });
-}
-
-function initSuccessScreen() {
-    // Success screen initialization
-}
-
-function startCountdown() {
-    const daysEl = document.getElementById('days');
-    const hoursEl = document.getElementById('hours');
-    const minutesEl = document.getElementById('minutes');
-    
-    let seconds = 0;
-    
-    setInterval(() => {
-        seconds++;
+    function showResult() {
+        resultSection.classList.remove('hidden');
         
-        if (seconds >= 60) {
-            seconds = 0;
-            const currentMinutes = parseInt(minutesEl.textContent);
-            minutesEl.textContent = currentMinutes + 1;
+        const scoreNum = document.getElementById('scoreNum');
+        const resultEmoji = document.getElementById('resultEmoji');
+        const resultMessage = document.getElementById('resultMessage');
+        const resultDetails = document.getElementById('resultDetails');
+        const resultHint = document.getElementById('resultHint');
+        
+        // 计算分数（基础分 + 随机加成）
+        let baseScore = Math.round((correctCount / questions.length) * 100);
+        let randomBonus = Math.floor(Math.random() * 15); // 随机加成
+        let finalScore = Math.min(baseScore + randomBonus, 100);
+        
+        // 如果选了"超级完美"，给高分
+        if (selectedPerfect) {
+            finalScore = Math.max(finalScore, 88);
         }
         
-        if (parseInt(minutesEl.textContent) >= 60) {
-            minutesEl.textContent = '0';
-            const currentHours = parseInt(hoursEl.textContent);
-            hoursEl.textContent = currentHours + 1;
+        // 动画显示分数
+        let displayScore = 0;
+        const scoreInterval = setInterval(() => {
+            displayScore += 2;
+            scoreNum.textContent = displayScore;
+            if (displayScore >= finalScore) {
+                clearInterval(scoreInterval);
+                scoreNum.textContent = finalScore;
+            }
+        }, 30);
+        
+        // 根据分数显示不同的结果
+        if (finalScore >= 90) {
+            resultEmoji.textContent = '🎉';
+            resultMessage.innerHTML = '哇！默契度超高！<br>看来我们真的很合得来呢 ✨';
+        } else if (finalScore >= 70) {
+            resultEmoji.textContent = '😊';
+            resultMessage.innerHTML = '还不错哦！<br>默契度挺高的嘛～';
+        } else if (finalScore >= 50) {
+            resultEmoji.textContent = '🤔';
+            resultMessage.innerHTML = '嗯...还有进步空间<br>看来要多聊聊了';
+        } else {
+            resultEmoji.textContent = '😂';
+            resultMessage.innerHTML = '哈哈，这都能答错？<br>你是故意的吧！';
         }
         
-        if (parseInt(hoursEl.textContent) >= 24) {
-            hoursEl.textContent = '0';
-            const currentDays = parseInt(daysEl.textContent);
-            daysEl.textContent = currentDays + 1;
-        }
-    }, 1000);
-}
-
-function createFallingHearts() {
-    const heartRain = document.querySelector('.heart-rain');
-    
-    setInterval(() => {
-        const heart = document.createElement('span');
-        heart.className = 'falling-heart';
-        heart.textContent = '❤️';
-        heart.style.left = Math.random() * 100 + '%';
-        heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
-        heartRain.appendChild(heart);
+        // 显示答题详情
+        resultDetails.innerHTML = `
+            <p><span>正确题数</span><span>${correctCount} / ${questions.length}</span></p>
+            <p><span>认识地点</span><span>${answers[0]?.correct ? '✓ 正确' : '✗ 错误'}</span></p>
+            <p><span>我的位置</span><span>${answers[1]?.correct ? '✓ 正确' : '✗ 错误'}</span></p>
+            <p><span>认识时间</span><span>${answers[2]?.correct ? '✓ 正确' : '✗ 错误'}</span></p>
+        `;
         
-        setTimeout(() => {
-            heart.remove();
-        }, 5000);
-    }, 300);
-}
-
-function createConfetti() {
-    const confetti = document.querySelector('.confetti');
-    const colors = ['#ff6b8a', '#ffd700', '#667eea', '#764ba2', '#00b894', '#ff4757'];
-    
-    for (let i = 0; i < 50; i++) {
-        const piece = document.createElement('div');
-        piece.className = 'confetti-piece';
-        piece.style.left = Math.random() * 100 + '%';
-        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-        piece.style.animationDelay = Math.random() * 3 + 's';
-        piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
-        piece.style.width = (Math.random() * 10 + 5) + 'px';
-        piece.style.height = (Math.random() * 10 + 5) + 'px';
-        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-        confetti.appendChild(piece);
+        // 如果选了"超级完美"，显示提示
+        if (selectedPerfect) {
+            resultHint.textContent = '💡 提示：点击"再玩一次"有惊喜哦~';
+        } else {
+            resultHint.textContent = '';
+        }
     }
-}
 
-function createSuccessHearts() {
-    const futureHearts = document.querySelector('.future-hearts');
-    futureHearts.innerHTML = '';
-    
-    const hearts = ['❤️', '💕', '💗', '💖', '💝', '💘', '💓'];
-    hearts.forEach((heart, index) => {
-        const span = document.createElement('span');
-        span.textContent = heart;
-        span.style.animationDelay = index * 0.2 + 's';
-        futureHearts.appendChild(span);
+    // 再玩一次按钮
+    const retryBtn = document.getElementById('retryBtn');
+    retryBtn.addEventListener('click', () => {
+        if (selectedPerfect) {
+            // 显示恶作剧彩蛋
+            resultSection.classList.add('hidden');
+            easterEgg.classList.remove('hidden');
+        } else {
+            // 重新开始
+            location.reload();
+        }
+    });
+
+    // 返回结果按钮
+    const backBtn = document.getElementById('backBtn');
+    backBtn.addEventListener('click', () => {
+        easterEgg.classList.add('hidden');
+        resultSection.classList.remove('hidden');
     });
 }
